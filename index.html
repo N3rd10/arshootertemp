@@ -4,15 +4,17 @@
     <title>AR Experience with Hand Tracking and Glove Model</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body style="margin: 0; overflow: hidden;">
     <a-scene embedded arjs>
         <a-marker preset="hiro">
-           <a-entity id="glove" gltf-model="url(models/blank character.glb)" scale="0.1 0.1 0.1" position="0 0 0" follow-user></a-entity>
+            <a-entity id="glove" gltf-model="url(models/blank character.glb)" scale="0.1 0.1 0.1" position="0 0 0" follow-user></a-entity>
         </a-marker>
         <a-entity camera></a-entity>
     </a-scene>
 
-   <script src="body.js"></script>
+    <script src="main.js"></script>
+    <script src="body.js"></script>
 </body>
 </html>
