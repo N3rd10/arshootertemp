@@ -1,18 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AR Experience</title>
+    <title>AR Experience with Hand Tracking and Glove Model</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.rawgit.com/victordraguet/handtrack.js/master/dist/handtrack.min.js"></script>
 </head>
 <body style="margin: 0; overflow: hidden;">
     <a-scene embedded arjs>
         <a-marker preset="hiro">
-            <a-box position='0 0.5 0' material='color: red;'></a-box>
+            <a-entity id="glove" gltf-model="url(models/glove.glb)" scale="0.1 0.1 0.1" position="0 0 0"></a-entity>
         </a-marker>
         <a-entity camera></a-entity>
-        
     </a-scene>
-    <script scr="body.js"></script>
+
+    <script>
+        const video = document.createElement('video');
+        const modelParams = {
+            flipHorizontal: true,
+            maxNumBoxes: 1,
+            iouThreshold: 0.5,
+            scoreThreshold: 0.6,
+        };
+
+        handTrack.load(modelParams).then(model => {
+            model.detect(video).then(predictions => {
+                if (predictions.length > 0) {
+                    const hand = predictions[0];
+                    const glove = document.getElementById('glove');
+
+                    // Position the glove based on the hand's bounding box
+                    const handX = hand.bbox[0] + (hand.bbox[2] - hand.bbox[0]) / 2; // Center X
+                    const handY = hand.bbox[1] + (hand.bbox[3] - hand.bbox[1]) / 2; // Center Y
+                    const handZ = 0; // Adjust Z position as needed
+
+                    // Update glove position
+                    glove.setAttribute('position', `${handX} ${handY} ${handZ}`);
+
+                    // Optionally, you can rotate the glove based on hand orientation
+                    // This requires additional logic to determine the hand's rotation
+                    // glove.setAttribute('rotation', `${hand.rotationX} ${hand.rotationY} ${hand.rotationZ}`);
+                } else {
+                    // If no hand is detected, you might want to hide the glove
+                    glove.setAttribute('position', '0 0 -10'); // Move it out of view
+                }
+                requestAnimationFrame(() => model.detect(video));
+            });
+        });
+
+        navigator.mediaDevices.getUser Media({ video: {} })
+            .then(stream => {
+                video.srcObject = stream;
+                video.play();
+            });
+    </script>
 </body>
 </html>
